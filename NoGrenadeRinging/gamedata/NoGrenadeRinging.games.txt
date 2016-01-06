@@ -1,0 +1,15 @@
+"Games"
+{
+	"cstrike"
+	{
+		"Offsets"
+		{
+			"OnDamagedByExplosion"
+			{
+				"windows"	"335"
+				"linux"		"336"
+				"mac"		"336"
+			}
+		}
+	}
+}

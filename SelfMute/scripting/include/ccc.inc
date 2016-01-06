@@ -1,0 +1,1 @@
+../../../custom-chatcolors/scripting/include/ccc.inc

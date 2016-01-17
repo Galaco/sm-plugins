@@ -165,7 +165,7 @@ public void OnClientPostAdminCheck(int client)
 
 public void OnClientDisconnect(int client)
 {
-	if(!g_Config || !g_PlayerLevels)
+	if(!g_Config || !g_PlayerLevels || !IsClientInGame(client))
 		return;
 
 	g_Config.Rewind();

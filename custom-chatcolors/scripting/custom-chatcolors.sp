@@ -2871,6 +2871,13 @@ public Action:Hook_UserMessage(UserMsg:msg_id, Handle:bf, const players[], playe
 	BfReadString(bf, g_msgName, sizeof(g_msgName), false);
 	BfReadString(bf, g_msgSender, sizeof(g_msgSender), false);
 	BfReadString(bf, g_msgText, sizeof(g_msgText), false);
+
+	if(strlen(g_msgName) == 0 || strlen(g_msgSender) == 0 || strlen(g_msgText) == 0)
+		return Plugin_Continue;
+
+	if(!strcmp(g_msgName, "#Cstrike_Name_Change"))
+		return Plugin_Continue;
+
 	CCC_GetTag(g_msgAuthor, sAuthorTag, sizeof(sAuthorTag));
 	new bool:bNameAlpha;
 	new bool:bChatAlpha;

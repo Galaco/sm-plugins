@@ -259,11 +259,11 @@ void LoadConfig()
 		Cleanup();
 
 	static char sConfigFile[PLATFORM_MAX_PATH];
-	BuildPath(Path_SM, sConfigFile, sizeof(sConfigFile), "configs/PointDetour.cfg");
+	BuildPath(Path_SM, sConfigFile, sizeof(sConfigFile), "configs/PointServerCommandFilter.cfg");
 	if(!FileExists(sConfigFile))
 		SetFailState("Could not find config: \"%s\"", sConfigFile);
 
-	KeyValues Config = new KeyValues("PointDetour");
+	KeyValues Config = new KeyValues("PointServerCommandFilter");
 	if(!Config.ImportFromFile(sConfigFile))
 	{
 		delete Config;

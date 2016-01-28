@@ -37,7 +37,7 @@ public Plugin myinfo =
 	name = "PointServerCommandFilter",
 	author = "BotoX",
 	description = "Filters point_servercommand->Command() using user-defined rules to restrict maps.",
-	version = "0.1",
+	version = "1.0",
 	url = ""
 };
 
@@ -55,7 +55,10 @@ public Action PointServerCommandForward(const char[] sOrigCommand)
 
 	int Split = SplitString(sCommandRight, " ", sCommandLeft, sizeof(sCommandLeft));
 	if(Split == -1)
+	{
 		strcopy(sCommandLeft, sizeof(sCommandLeft), sCommandRight);
+		Split = 0;
+	}
 	TrimString(sCommandLeft);
 	strcopy(sCommandRight, sizeof(sCommandRight), sCommandRight[Split]);
 
@@ -88,6 +91,7 @@ Action MatchRuleList(ArrayList RuleList, const char[] sOrigCommand, const char[]
 		StringMap Rule = RuleList.Get(r);
 		int Mode;
 		Rule.GetValue("mode", Mode);
+		bool IsNumeric = IsCharNumeric(sCommandRight[0]) || (sCommandRight[0] == '-' && IsCharNumeric(sCommandRight[1]));
 
 		if(Mode & MODE_ALL)
 			State |= STATE_ALLOW;
@@ -105,7 +109,7 @@ Action MatchRuleList(ArrayList RuleList, const char[] sOrigCommand, const char[]
 			Rule.GetValue("value", WantValue);
 			IsValue = StringToInt(sCommandRight);
 
-			if(IsCharNumeric(sCommandRight[0]) && WantValue == IsValue)
+			if(IsNumeric && WantValue == IsValue)
 				State |= STATE_ALLOW;
 		}
 		else if(Mode & MODE_FLOATVALUE)
@@ -115,7 +119,7 @@ Action MatchRuleList(ArrayList RuleList, const char[] sOrigCommand, const char[]
 			Rule.GetValue("value", WantValue);
 			IsValue = StringToFloat(sCommandRight);
 
-			if(IsCharNumeric(sCommandRight[0]) && FloatCompare(IsValue, WantValue) == 0)
+			if(IsNumeric && FloatCompare(IsValue, WantValue) == 0)
 				State |= STATE_ALLOW;
 		}
 		else if(Mode & MODE_REGEXVALUE)
@@ -129,7 +133,6 @@ Action MatchRuleList(ArrayList RuleList, const char[] sOrigCommand, const char[]
 		float MinValue;
 		float MaxValue;
 		float IsValue = StringToFloat(sCommandRight);
-		bool IsNumeric = IsCharNumeric(sCommandRight[0]);
 		if(!IsNumeric && (Mode & MODE_MIN || Mode & MODE_MAX))
 			continue; // Ignore non-numerical
 

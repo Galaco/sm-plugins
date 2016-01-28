@@ -21,5 +21,6 @@ public SharedPlugin:__pl_AdvancedTargeting =
 public __pl_myfile_SetNTVOptional()
 {
 	MarkNativeAsOptional("IsClientFriend");
+	MarkNativeAsOptional("ReadClientFriends");
 }
 #endif

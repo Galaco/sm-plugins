@@ -25,6 +25,7 @@ public Plugin:myinfo =
 
 public OnPluginStart()
 {
+	LoadTranslations("common.phrases");
 	RegAdminCmd("sm_hp", Command_Health, ADMFLAG_GENERIC, "sm_hp <#userid|name> <value>");
 	RegAdminCmd("sm_kevlar", Command_Kevlar, ADMFLAG_GENERIC, "sm_kevlar <#userid|name> <value>");
 	RegAdminCmd("sm_weapon", Command_Weapon, ADMFLAG_GENERIC, "sm_weapon <#userid|name> <name> [clip] [ammo]");

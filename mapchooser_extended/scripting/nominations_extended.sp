@@ -679,13 +679,14 @@ public Handler_AdminMapSelectMenu(Handle:menu, MenuAction:action, param1, param2
 	{
 		case MenuAction_Select:
 		{
-			decl String:map[PLATFORM_MAX_PATH], String:name[MAX_NAME_LENGTH];
+			decl String:map[PLATFORM_MAX_PATH];
 			GetMenuItem(menu, param2, map, sizeof(map));
 
-			new NominateResult:result = NominateMap(map, false, 0);
+			new NominateResult:result = NominateMap(map, true, 0);
 
-			if (result == Nominate_AlreadyInVote)
+			if (result > Nominate_Replaced)
 			{
+				/* We assume already in vote is the casue because the maplist does a Map Validity check and we forced, so it can't be full */
 				PrintToChat(param1, "[NE] %t", "Map Already In Vote", map);
 				return 0;
 			}
@@ -695,7 +696,7 @@ public Handler_AdminMapSelectMenu(Handle:menu, MenuAction:action, param1, param2
 			PrintToChat(param1, "[NE] %t", "Map Inserted", map);
 			LogAction(param1, -1, "\"%L\" inserted map \"%s\".", param1, map);
 
-			PrintToChatAll("[NE] %N has inserted %s into nominations", name, map);
+			PrintToChatAll("[NE] %N has inserted %s into nominations", param1, map);
 		}
 	}
 

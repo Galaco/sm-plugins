@@ -9,7 +9,7 @@
 Handle g_hNoShakeCookie;
 ConVar g_Cvar_NoShakeGlobal;
 
-bool g_bNoShake[MAXPLAYERS] = {false, ...};
+bool g_bNoShake[MAXPLAYERS + 1] = {false, ...};
 bool g_bNoShakeGlobal = false;
 
 public Plugin myinfo =
@@ -17,7 +17,7 @@ public Plugin myinfo =
 	name 			= "NoShake",
 	author 			= "BotoX",
 	description 	= "Disable env_shake",
-	version 		= "1.0",
+	version 		= "1.0.1",
 	url 			= ""
 };
 

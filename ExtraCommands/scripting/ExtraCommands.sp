@@ -19,7 +19,7 @@ public Plugin:myinfo =
 	name = "Advanced Commands",
 	author = "BotoX",
 	description = "Adds: hp, kevlar, weapon, strip, buyzone, iammo, speed",
-	version = "1.0",
+	version = "1.0.1",
 	url = ""
 };
 
@@ -93,7 +93,7 @@ public Action Listener_Pause(int client, const char[] command, int argc)
 
 public Action:Event_BombPlanted(Handle:event, const String:name[], bool:dontBroadcast)
 {
-	for(new i = 1; i < MAXPLAYERS; i++)
+	for(new i = 1; i <= MAXPLAYERS; i++)
 	{
 		if(IsClientInGame(i))
 			ClientCommand(i, "playgamesound \"radio/bombpl.wav\"");
@@ -103,7 +103,7 @@ public Action:Event_BombPlanted(Handle:event, const String:name[], bool:dontBroa
 
 public Action:Event_BombDefused(Handle:event, const String:name[], bool:dontBroadcast)
 {
-	for(new i = 1; i < MAXPLAYERS; i++)
+	for(new i = 1; i <= MAXPLAYERS; i++)
 	{
 		if(IsClientInGame(i))
 			ClientCommand(i, "playgamesound \"radio/bombdef.wav\"");

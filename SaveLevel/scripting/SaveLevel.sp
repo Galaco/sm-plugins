@@ -258,6 +258,48 @@ public void OnClientDisconnect(int client)
 
 				Matches += CalcMatches(_Matches, _ExactMatches, _MinMatches, _MaxMatches);
 			}
+			else if(StrEqual(sSection, "math"))
+			{
+				int _Matches = 0;
+				int _ExactMatches = g_Config.GetNum("ExactMatches", -1);
+				int _MinMatches = g_Config.GetNum("MinMatches", -1);
+				int _MaxMatches = g_Config.GetNum("MaxMatches", -1);
+
+				if(g_Config.GotoFirstSubKey(false))
+				{
+					do
+					{
+						g_Config.GetSectionName(sKey, sizeof(sKey));
+						g_Config.GetString(NULL_STRING, sValue, sizeof(sValue));
+
+						int Count = GetOutputCount(client, sKey);
+						for(int i = 0; i < Count; i++)
+						{
+							int Target;
+							int Input;
+							int Parameter;
+
+							int Len = GetOutputTarget(client, sKey, i, sOutput);
+
+							Input = Len;
+							Len += GetOutputTargetInput(client, sKey, i, sOutput[Len]);
+
+							Parameter = Len;
+							Len += GetOutputParameter(client, sKey, i, sOutput[Len]);
+
+							PrintToChatAll("Target: %d -> \"%s\"", sOutput[Target]);
+							PrintToChatAll("Input: %d -> \"%s\"", sOutput[Input]);
+							PrintToChatAll("Parameter: %d -> \"%s\"", sOutput[Parameter]);
+						}
+					}
+					while(g_Config.GotoNextKey(false));
+
+					g_Config.GoBack();
+				}
+				g_Config.GoBack();
+
+				Matches += CalcMatches(_Matches, _ExactMatches, _MinMatches, _MaxMatches);
+			}
 		}
 		while(g_Config.GotoNextKey(false));
 

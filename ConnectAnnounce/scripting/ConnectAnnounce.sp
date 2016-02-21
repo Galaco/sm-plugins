@@ -25,7 +25,7 @@ public void OnClientPostAdminCheck(int client)
 	GetClientAuthId(client, AuthId_Steam2, sAuth, sizeof(sAuth));
 
 	if(GetClientIP(client, sIP, sizeof(sIP)) && GeoipCountry(sIP, sCountry, sizeof(sCountry)))
-		PrintToChatAll("\x04%L [\x03%s\x04] connected from %s", client, sAuth, sCountry);
+		PrintToChatAll("\x04%N [\x03%s\x04] connected from %s", client, sAuth, sCountry);
 	else
-		PrintToChatAll("\x04%L [\x03%s\x04] connected", client, sAuth);
+		PrintToChatAll("\x04%N [\x03%s\x04] connected", client, sAuth);
 }

@@ -10,7 +10,7 @@ StringMap g_PlayerLevels;
 KeyValues g_Config;
 KeyValues g_PropAltNames;
 
-#define PLUGIN_VERSION "1.0"
+#define PLUGIN_VERSION "1.1"
 public Plugin myinfo =
 {
 	name 			= "SaveLevel",
@@ -260,11 +260,6 @@ public void OnClientDisconnect(int client)
 			}
 			else if(StrEqual(sSection, "math"))
 			{
-				int _Matches = 0;
-				int _ExactMatches = g_Config.GetNum("ExactMatches", -1);
-				int _MinMatches = g_Config.GetNum("MinMatches", -1);
-				int _MaxMatches = g_Config.GetNum("MaxMatches", -1);
-
 				if(g_Config.GotoFirstSubKey(false))
 				{
 					do
@@ -272,33 +267,55 @@ public void OnClientDisconnect(int client)
 						g_Config.GetSectionName(sKey, sizeof(sKey));
 						g_Config.GetString(NULL_STRING, sValue, sizeof(sValue));
 
+						int Target = 0;
+						int Input;
+						int Parameter;
+
+						Input = FindCharInString(sValue[Target], ',');
+						sValue[Input] = 0; Input++;
+
+						Parameter = Input + FindCharInString(sValue[Input], ',');
+						sValue[Parameter] = 0; Parameter++;
+
+						int Value = 0;
 						int Count = GetOutputCount(client, sKey);
 						for(int i = 0; i < Count; i++)
 						{
-							int Target;
-							int Input;
-							int Parameter;
+							int _Target = 0;
+							int _Input;
+							int _Parameter;
 
-							int Len = GetOutputTarget(client, sKey, i, sOutput);
+							_Input = GetOutputTarget(client, sKey, i, sOutput[_Target]);
+							sOutput[_Input] = 0; _Input++;
 
-							Input = Len;
-							Len += GetOutputTargetInput(client, sKey, i, sOutput[Len]);
+							_Parameter = _Input + GetOutputTargetInput(client, sKey, i, sOutput[_Input]);
+							sOutput[_Parameter] = 0; _Parameter++;
 
-							Parameter = Len;
-							Len += GetOutputParameter(client, sKey, i, sOutput[Len]);
+							GetOutputParameter(client, sKey, i, sOutput[_Parameter]);
 
-							PrintToChatAll("Target: %d -> \"%s\"", sOutput[Target]);
-							PrintToChatAll("Input: %d -> \"%s\"", sOutput[Input]);
-							PrintToChatAll("Parameter: %d -> \"%s\"", sOutput[Parameter]);
+							if(!StrEqual(sOutput[_Target], sValue[Target]))
+								continue;
+
+							int _Value = StringToInt(sOutput[_Parameter]);
+
+							if(StrEqual(sOutput[_Input], "add", false))
+								Value += _Value;
+							else if(StrEqual(sOutput[_Input], "subtract", false))
+								Value -= _Value;
 						}
+
+						int Result = StringToInt(sValue[Parameter]);
+						if(StrEqual(sValue[Input], "subtract", false))
+							Result *= -1;
+
+						if(Value == Result)
+							Matches += 1;
 					}
 					while(g_Config.GotoNextKey(false));
 
 					g_Config.GoBack();
 				}
 				g_Config.GoBack();
-
-				Matches += CalcMatches(_Matches, _ExactMatches, _MinMatches, _MaxMatches);
 			}
 		}
 		while(g_Config.GotoNextKey(false));

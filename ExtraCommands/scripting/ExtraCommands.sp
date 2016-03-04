@@ -151,13 +151,13 @@ public Event_WeaponFire(Handle:hEvent, String:name[], bool:dontBroadcast)
 			{
 				new toAdd = 1;
 				new String:weaponClassname[128];
-				GetEntityClassname(weapon, weaponClassname, 128);
+				GetEntityClassname(weapon, weaponClassname, sizeof(weaponClassname));
 
 				if(StrEqual(weaponClassname, "weapon_glock", true) || StrEqual(weaponClassname, "weapon_famas", true))
 				{
-					if(GetEntProp(weapon, Prop_Data, "m_bBurstMode", 4, 0))
+					if(GetEntProp(weapon, Prop_Send, "m_bBurstMode"))
 					{
-						switch (GetEntProp(weapon, Prop_Send, "m_iClip1", 4, 0))
+						switch (GetEntProp(weapon, Prop_Send, "m_iClip1"))
 						{
 							case 1:
 							{
@@ -243,7 +243,7 @@ public Action:Command_Kevlar(client, args)
 	new amount = 0;
 	decl String:arg2[20];
 	GetCmdArg(2, arg2, sizeof(arg2));
-	if(StringToIntEx(arg2, amount) == 0 || amount <= 0)
+	if(StringToIntEx(arg2, amount) == 0 || amount < 0)
 	{
 		ReplyToCommand(client, "[SM] Invalid Value");
 		return Plugin_Handled;

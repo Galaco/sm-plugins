@@ -14,9 +14,9 @@
 public Plugin:myinfo =
 {
 	name 			= "ForceInput",
-	author 			= "zaCade",
+	author 			= "zaCade + BotoX",
 	description 	= "Allows admins to force inputs on entities. (ent_fire)",
-	version 		= "1.2",
+	version 		= "1.3",
 	url 			= ""
 };
 
@@ -26,6 +26,52 @@ public Plugin:myinfo =
 public OnPluginStart()
 {
 	RegAdminCmd("sm_forceinput", Command_ForceInput, ADMFLAG_ROOT);
+	RegAdminCmd("sm_forceinputplayer", Command_ForceInputPlayer, ADMFLAG_ROOT);
+}
+
+//----------------------------------------------------------------------------------------------------
+// Purpose:
+//----------------------------------------------------------------------------------------------------
+public Action:Command_ForceInputPlayer(client, args)
+{
+	if (GetCmdArgs() < 2)
+	{
+		ReplyToCommand(client, "[SM] Usage: sm_forceinputplayer <target> <input> [parameter]");
+		return Plugin_Handled;
+	}
+
+	new String:sArguments[3][256];
+	GetCmdArg(1, sArguments[0], sizeof(sArguments[]));
+	GetCmdArg(2, sArguments[1], sizeof(sArguments[]));
+	GetCmdArg(3, sArguments[2], sizeof(sArguments[]));
+
+	decl String:target_name[MAX_TARGET_LENGTH];
+	decl target_list[MAXPLAYERS], target_count, bool:tn_is_ml;
+
+	if((target_count = ProcessTargetString(
+			sArguments[0],
+			client,
+			target_list,
+			MAXPLAYERS,
+			COMMAND_FILTER_ALIVE,
+			target_name,
+			sizeof(target_name),
+			tn_is_ml)) <= 0)
+	{
+		ReplyToTargetError(client, target_count);
+		return Plugin_Handled;
+	}
+
+	for(new i = 0; i < target_count; i++)
+	{
+		if (sArguments[2][0])
+			SetVariantString(sArguments[2]);
+
+		AcceptEntityInput(target_list[i], sArguments[1], target_list[i], target_list[i]);
+		ReplyToCommand(client, "[SM] Input succesfull.");
+	}
+
+	return Plugin_Handled;
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -46,7 +92,7 @@ public Action:Command_ForceInput(client, args)
 
 	if (StrEqual(sArguments[0], "!self"))
 	{
-		if (strlen(sArguments[2]))
+		if (sArguments[2][0])
 			SetVariantString(sArguments[2]);
 
 		AcceptEntityInput(client, sArguments[1], client, client);
@@ -66,7 +112,7 @@ public Action:Command_ForceInput(client, args)
 		{
 			if (IsValidEntity(entity) || IsValidEdict(entity))
 			{
-				if (strlen(sArguments[2]))
+				if (sArguments[2][0])
 					SetVariantString(sArguments[2]);
 
 				AcceptEntityInput(entity, sArguments[1], client, client);
@@ -88,7 +134,7 @@ public Action:Command_ForceInput(client, args)
 
 				if (StrEqual(sClassname, sArguments[0], false) || StrEqual(sTargetname, sArguments[0], false))
 				{
-					if (strlen(sArguments[2]))
+					if (sArguments[2][0])
 						SetVariantString(sArguments[2]);
 
 					AcceptEntityInput(entity, sArguments[1], client, client);

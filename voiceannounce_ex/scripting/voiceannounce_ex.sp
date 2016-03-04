@@ -145,7 +145,7 @@ public MRESReturn:Hook_ProcessVoiceData(Address:pThis, Handle:hParams)
 		g_hClientMicTimers[client] = CreateTimer(0.3, Timer_ClientMicUsage, GetClientUserId(client));
 	}
 
-	if(g_hClientMicTimers[client] == INVALID_HANDLE)
+	if(g_hClientMicTimers[client] == INVALID_HANDLE && IsClientInGame(client))
 		g_hClientMicTimers[client] = CreateTimer(0.3, Timer_ClientMicUsage, GetClientUserId(client));
 
 	new bool:returnBool = true;
@@ -167,7 +167,7 @@ public MRESReturn:CSGOVoicePost(client, Handle:hReturn)
 		g_hClientMicTimers[client] = CreateTimer(0.3, Timer_ClientMicUsage, GetClientUserId(client));
 	}
 
-	if(g_hClientMicTimers[client] == INVALID_HANDLE)
+	if(g_hClientMicTimers[client] == INVALID_HANDLE && IsClientInGame(client))
 		g_hClientMicTimers[client] = CreateTimer(0.3, Timer_ClientMicUsage, GetClientUserId(client));
 
 

@@ -824,17 +824,17 @@ bool:IRS_KickValidClient(const AdminId:ConnectingClientAdminID, const String:Con
 			continue;
 		}
 
-		if (b_useEntWatch && entWatch_HasSpecialItem(i))
-		{
-			if (Logging == 1)
-			{
-				IRS_LogClient(i, clientTeam[i], ClientImmunity[i]);
-			}
-			continue;
-		}
-
 		if (IsClientInGame(i))
 		{
+			if (b_useEntWatch && entWatch_HasSpecialItem(i))
+			{
+				if (Logging == 1)
+				{
+					IRS_LogClient(i, clientTeam[i], ClientImmunity[i]);
+				}
+				continue;
+			}
+
 			switch (KickType)
 			{
 				case 0:

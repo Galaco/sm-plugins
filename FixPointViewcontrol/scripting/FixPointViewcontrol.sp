@@ -1,38 +1,66 @@
 #include <sourcemod>
 #include <sdktools>
 
-public Plugin:myinfo =
+#pragma newdecls required
+
+public Plugin myinfo =
 {
 	name = "point_viewcontrol fix",
-	author = "Alienmario",
-	description = "Fixes point_viewcontrol not exiting for multiple players",
+	author = "Alienmario, DormantLemon (refactor)",
+	description = "Fix point_viewcontrol not disabling properly for >1 player",
 	version = "1.0",
 }
 
-public OnPluginStart(){
+public void OnPluginStart(){
 	HookEntityOutput("point_viewcontrol", "OnEndFollow", OnViewEnd);
 	AddCommandListener(BlockKill, "kill");
 	AddCommandListener(BlockKill, "explode");
-	HookEvent("player_death", Event_Death);
+	HookEvent("player_death", Event_Death);	
 }
 
-public Action:BlockKill(client, const String:command[], argc) {
+/**
+ * BlockKill: Prevent killing of a point_viewcontrol whilst in use by player(s). 
+ *
+ * @param int     client   Client id.
+ * @param char[]  command  Command (unused).
+ * @param int     argc     Additional arg (unused).
+ *
+ * @return void
+ */
+public Action BlockKill(int client, const char[] command, int argc) {
 	if( isInView(client) )
 		return Plugin_Handled;
 	return Plugin_Continue;
 }
 
-public Event_Death (Handle:event, const String:name[], bool:dontBroadcast){
-	new client = GetClientOfUserId(GetEventInt(event, "userid"));
+/**
+ * Event_Death: Remove viewEnt point_viewcontrol for client on death.
+ * Does NOT Disable entity.
+ *
+ * @param Handle  event          Event Handle.
+ * @param char[]  name     		 Name (unused).
+ * @param bool    dontBroadcast  Should broadcast this or not (unused).
+ *
+ * @return void
+ */
+public void Event_Death (Handle event, const char[] name, bool dontBroadcast){
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
 	if(isInView(client)){
 		SetClientViewEntity(client, client);
 		SetEntityFlags(client, GetEntityFlags(client) &~ FL_FROZEN);
 	}
 }
 
-bool:isInView(client){
-	new m_hViewEntity = GetEntPropEnt(client, Prop_Data, "m_hViewEntity");
-	decl String:classname[20];
+/**
+ * isInView: Check if client viewEnt is point_viewControl.
+ *
+ * @param int  client  Client to check against.
+ *
+ * @return bool
+ */
+bool isInView(int client){
+	int m_hViewEntity = GetEntPropEnt(client, Prop_Data, "m_hViewEntity");
+	char classname[20];
 	if( IsValidEdict(m_hViewEntity) && GetEdictClassname(m_hViewEntity, classname, sizeof(classname) ) ){
 		if(StrEqual(classname, "point_viewcontrol")){
 			return true;
@@ -41,12 +69,21 @@ bool:isInView(client){
 	return false;
 }
 
-public OnViewEnd(const String:output[], caller, activator, Float:delay){
-	for (new client=1; client<=MaxClients; client++){
+/**
+ * OnViewEnd: Disable viewEnt point_viewcontrol for all alive players.
+ *
+ * @param char[]  output     Output (unused).
+ * @param int     caller     Output caller.
+ * @param int     activator  Output activator (unused).
+ * @param float   delay      Delay (unused).
+ *
+ * @return void
+ */
+public void OnViewEnd(const char[] output, int caller, int activator, float delay){
+	for (int client=1; client<=MaxClients; client++){
 		if(IsClientInGame(client) && IsPlayerAlive(client)){
-			new m_hViewEntity = GetEntPropEnt(client, Prop_Data, "m_hViewEntity");
-			if( m_hViewEntity == caller){
-				
+			int m_hViewEntity = GetEntPropEnt(client, Prop_Data, "m_hViewEntity");
+			if( m_hViewEntity == caller){		
 				if ( GetEntPropEnt(m_hViewEntity, Prop_Data, "m_hPlayer") != client){
 					SetEntPropEnt(m_hViewEntity, Prop_Data, "m_hPlayer", client);
 					AcceptEntityInput(m_hViewEntity, "Disable");
